@@ -452,6 +452,8 @@
     const TELEGRAM_CHAT_ID = '6632867820';
     const MAP_NAME = 'Sarkles Obstacle';
     const DAILY_KEY = 'bc_sarkles_daily_records';
+    const DEVICE_KEY = 'bc_sarkles_device_id';
+    const DEVICE_LOCK_KEY = 'bc_sarkles_device_locks';
     const WELCOME_TEXT = 'Welcome to Beard Community. Silakan isi nama dan total jam di map Sarkles Obstacle dengan benar.';
     const THANKS_TEXT = 'Terima kasih, sudah absen. Data kamu sudah terkirim.';
 
@@ -495,6 +497,75 @@
 
     function normalizeName(value) {
       return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    }
+
+    function simpleHash(value) {
+      let hash = 0;
+      const text = String(value || '');
+      for (let i = 0; i < text.length; i += 1) {
+        hash = ((hash << 5) - hash) + text.charCodeAt(i);
+        hash |= 0;
+      }
+      return Math.abs(hash).toString(36).toUpperCase().padStart(7, '0');
+    }
+
+    function getDeviceId() {
+      const base = [
+        navigator.userAgent,
+        navigator.language,
+        screen.width + 'x' + screen.height,
+        screen.colorDepth,
+        Intl.DateTimeFormat().resolvedOptions().timeZone
+      ].join('|');
+
+      try {
+        let deviceId = localStorage.getItem(DEVICE_KEY);
+        if (!deviceId) {
+          deviceId = 'HP-' + simpleHash(base + '|' + Date.now() + '|' + Math.random());
+          localStorage.setItem(DEVICE_KEY, deviceId);
+        }
+        return deviceId;
+      } catch {
+        return 'HP-' + simpleHash(base);
+      }
+    }
+
+    function getDeviceLocks() {
+      try {
+        const locks = JSON.parse(localStorage.getItem(DEVICE_LOCK_KEY) || '[]');
+        return Array.isArray(locks) ? locks : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveDeviceLocks(locks) {
+      try {
+        localStorage.setItem(DEVICE_LOCK_KEY, JSON.stringify(locks.slice(0, 120)));
+      } catch {
+      }
+    }
+
+    function hasDeviceSubmittedToday() {
+      const date = todayId();
+      const deviceId = getDeviceId();
+      return getDeviceLocks().some(item => item.tanggal === date && item.deviceId === deviceId);
+    }
+
+    function saveDeviceLock(data) {
+      const limitDate = new Date();
+      limitDate.setDate(limitDate.getDate() - 30);
+      const locks = getDeviceLocks().filter(item => {
+        const itemDate = new Date(item.tanggal + 'T00:00:00');
+        return itemDate >= limitDate;
+      });
+      locks.unshift({
+        tanggal: data.tanggal,
+        deviceId: data.deviceId,
+        nama: data.nama,
+        waktu: new Date().toISOString()
+      });
+      saveDeviceLocks(locks);
     }
 
     function getDailyRecords() {
@@ -587,6 +658,8 @@
         '<b>Status Kehadiran:</b> ' + escapeHtml(status),
         '<b>Deteksi Harian:</b> ' + escapeHtml(data.statusHarian),
         '<b>Input Harian Ke:</b> ' + escapeHtml(data.inputHarianKe),
+        '<b>ID Perangkat:</b> ' + escapeHtml(data.deviceId),
+        '<b>Keamanan:</b> 1 perangkat hanya bisa setor 1 kali per hari',
         '<b>Waktu Kirim:</b> ' + escapeHtml(new Date().toLocaleString('id-ID')),
         '==============================',
         '<b>Catatan:</b> Nama yang tidak muncul pada laporan harian sampai batas waktu berarti belum setor.'
@@ -640,6 +713,11 @@
         return;
       }
 
+      if (hasDeviceSubmittedToday()) {
+        showNotice('error', 'Perangkat ini sudah mengirim setoran hari ini. Coba lagi besok.');
+        return;
+      }
+
       const duplicateToday = submittedToday(nama.value);
       const todayCount = recordsToday().length;
       const data = {
@@ -648,7 +726,8 @@
         tanggal: todayId(),
         hari: todayName(),
         statusHarian: duplicateToday ? 'PEMBARUAN ABSEN HARI INI' : 'ABSEN HARI INI',
-        inputHarianKe: duplicateToday ? todayCount : todayCount + 1
+        inputHarianKe: duplicateToday ? todayCount : todayCount + 1,
+        deviceId: getDeviceId()
       };
 
       if (!data.nama || data.jam === '') {
@@ -672,6 +751,7 @@
       try {
         await sendTelegram(buildMessage(data));
         saveDailyRecord(data);
+        saveDeviceLock(data);
         showNotice('success', 'Setoran berhasil dikirim.');
         speak(THANKS_TEXT);
         form.reset();
@@ -685,6 +765,7 @@
     });
 
     updateStatus();
+    getDeviceId();
   </script>
 </body>
 </html>
