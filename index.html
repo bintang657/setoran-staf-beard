@@ -379,6 +379,73 @@
       background: var(--green);
     }
 
+
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: none;
+      place-items: center;
+      padding: 22px;
+      background: rgba(2, 7, 18, 0.72);
+      backdrop-filter: blur(18px);
+    }
+
+    .modal-backdrop.show {
+      display: grid;
+      animation: fadeIn 180ms ease both;
+    }
+
+    .modal-box {
+      width: min(430px, 100%);
+      border: 1px solid rgba(98, 232, 255, 0.34);
+      border-radius: 26px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.080), rgba(255, 255, 255, 0.030)),
+        rgba(9, 16, 34, 0.96);
+      box-shadow: 0 34px 100px rgba(0, 0, 0, 0.62);
+      padding: 24px;
+      transform: translateY(8px) scale(0.98);
+      animation: modalIn 200ms ease both;
+    }
+
+    .modal-box h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      letter-spacing: -0.04em;
+    }
+
+    .modal-box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .modal-actions button {
+      min-height: 50px;
+      border-radius: 16px;
+      padding: 13px 16px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
     @media (max-width: 560px) {
       .wrap {
         width: min(100% - 22px, 720px);
@@ -447,6 +514,17 @@
     </section>
   </main>
 
+  <div class="modal-backdrop" id="customModal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Konfirmasi</h3>
+      <p id="modalText">Nama ini sudah absen hari ini.</p>
+      <div class="modal-actions">
+        <button type="button" class="ghost" id="modalCancel">Batal</button>
+        <button type="button" id="modalConfirm">Kirim Ulang</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const TELEGRAM_BOT_TOKEN = '8830932015:AAHuZtTFfaAxJCJ_z6DAGVorOjLAWxCK730';
     const TELEGRAM_CHAT_ID = '6632867820';
@@ -465,6 +543,10 @@
     const resetBtn = document.getElementById('resetBtn');
     const statusBox = document.getElementById('statusBox');
     const statusText = document.getElementById('statusText');
+    const customModal = document.getElementById('customModal');
+    const modalText = document.getElementById('modalText');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalConfirm = document.getElementById('modalConfirm');
 
     function configured() {
       return TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID && TELEGRAM_BOT_TOKEN !== 'ISI_TOKEN_BOT_KAMU' && TELEGRAM_CHAT_ID !== 'ISI_CHAT_ID_KAMU';
@@ -641,6 +723,46 @@
       notice.textContent = '';
     }
 
+    function customConfirm(message) {
+      return new Promise(resolve => {
+        modalText.textContent = message;
+        customModal.classList.add('show');
+        customModal.setAttribute('aria-hidden', 'false');
+
+        function close(result) {
+          customModal.classList.remove('show');
+          customModal.setAttribute('aria-hidden', 'true');
+          modalCancel.removeEventListener('click', onCancel);
+          modalConfirm.removeEventListener('click', onConfirm);
+          customModal.removeEventListener('click', onBackdrop);
+          document.removeEventListener('keydown', onKeydown);
+          resolve(result);
+        }
+
+        function onCancel() {
+          close(false);
+        }
+
+        function onConfirm() {
+          close(true);
+        }
+
+        function onBackdrop(event) {
+          if (event.target === customModal) close(false);
+        }
+
+        function onKeydown(event) {
+          if (event.key === 'Escape') close(false);
+        }
+
+        modalCancel.addEventListener('click', onCancel);
+        modalConfirm.addEventListener('click', onConfirm);
+        customModal.addEventListener('click', onBackdrop);
+        document.addEventListener('keydown', onKeydown);
+        modalConfirm.focus();
+      });
+    }
+
     function buildMessage(data) {
       const totalJam = Number(data.jam || 0);
       const status = totalJam > 0 ? 'HADIR' : 'BOLOS';
@@ -741,7 +863,7 @@
       }
 
       if (duplicateToday) {
-        const lanjut = confirm('Nama ini sudah absen hari ini di perangkat ini. Kirim ulang sebagai pembaruan?');
+        const lanjut = await customConfirm('Nama ini sudah absen hari ini di perangkat ini. Kirim ulang sebagai pembaruan?');
         if (!lanjut) return;
       }
 
