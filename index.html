@@ -232,7 +232,8 @@
       letter-spacing: 0.02em;
     }
 
-    input {
+    input,
+    textarea {
       width: 100%;
       min-height: 58px;
       border: 1px solid rgba(159, 176, 209, 0.22);
@@ -248,11 +249,18 @@
       transition: border-color 170ms ease, box-shadow 170ms ease, transform 170ms ease, background 170ms ease;
     }
 
-    input::placeholder {
+    textarea {
+      min-height: 112px;
+      resize: vertical;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
       color: rgba(159, 176, 209, 0.58);
     }
 
-    input:focus {
+    input:focus,
+    textarea:focus {
       border-color: var(--line-strong);
       box-shadow:
         0 0 0 4px rgba(98, 232, 255, 0.08),
@@ -493,18 +501,28 @@
         <form id="setoranForm">
           <div class="field">
             <label for="nama">Nama</label>
-            <input id="nama" name="nama" type="text" placeholder="Masukkan nama" autocomplete="name" required>
+            <input id="nama" name="nama" type="text" autocomplete="name" required>
           </div>
 
           <div class="field">
-            <label for="jam">Berapa jam di map</label>
-            <input id="jam" name="jam" type="number" min="0" step="0.1" placeholder="Contoh: 2.5" required>
+            <label for="hari">Hari</label>
+            <input id="hari" name="hari" type="text" required>
+          </div>
+
+          <div class="field">
+            <label for="bug">Laporan bug</label>
+            <textarea id="bug" name="bug" required></textarea>
+          </div>
+
+          <div class="field">
+            <label for="catatan">Catatan</label>
+            <textarea id="catatan" name="catatan"></textarea>
           </div>
 
           <div id="notice" class="notice"></div>
 
           <div class="actions">
-            <button type="submit" id="sendBtn">Kirim Setoran</button>
+            <button type="submit" id="sendBtn">Kirim Laporan</button>
             <button type="button" class="ghost" id="resetBtn">Reset</button>
           </div>
         </form>
@@ -532,12 +550,14 @@
     const DAILY_KEY = 'bc_sarkles_daily_records';
     const DEVICE_KEY = 'bc_sarkles_device_id';
     const DEVICE_LOCK_KEY = 'bc_sarkles_device_locks';
-    const WELCOME_TEXT = 'Welcome to Beard Community. Silakan isi nama dan total jam di map Sarkles Obstacle dengan benar.';
-    const THANKS_TEXT = 'Terima kasih, sudah absen. Data kamu sudah terkirim.';
+    const WELCOME_TEXT = 'Welcome to Beard Community.';
+    const THANKS_TEXT = 'Terima kasih, laporan kamu sudah terkirim.';
 
     const form = document.getElementById('setoranForm');
     const nama = document.getElementById('nama');
-    const jam = document.getElementById('jam');
+    const hari = document.getElementById('hari');
+    const bug = document.getElementById('bug');
+    const catatan = document.getElementById('catatan');
     const notice = document.getElementById('notice');
     const sendBtn = document.getElementById('sendBtn');
     const resetBtn = document.getElementById('resetBtn');
@@ -764,27 +784,14 @@
     }
 
     function buildMessage(data) {
-      const totalJam = Number(data.jam || 0);
-      const status = totalJam > 0 ? 'HADIR' : 'BOLOS';
-      const judul = totalJam > 0 ? 'SETORAN MASUK' : 'LAPORAN BOLOS';
-
       return [
         '<b>BEARD COMMUNITY</b>',
-        '<b>' + judul + '</b>',
-        '==============================',
-        '<b>Map:</b> ' + escapeHtml(MAP_NAME),
-        '<b>Tanggal:</b> ' + escapeHtml(data.tanggal),
-        '<b>Hari:</b> ' + escapeHtml(data.hari),
+        '<b>LAPORAN BUG MAP</b>',
+        '',
         '<b>Nama:</b> ' + escapeHtml(data.nama),
-        '<b>Total Jam:</b> ' + escapeHtml(formatNumber(data.jam)) + ' jam',
-        '<b>Status Kehadiran:</b> ' + escapeHtml(status),
-        '<b>Deteksi Harian:</b> ' + escapeHtml(data.statusHarian),
-        '<b>Input Harian Ke:</b> ' + escapeHtml(data.inputHarianKe),
-        '<b>ID Perangkat:</b> ' + escapeHtml(data.deviceId),
-        '<b>Keamanan:</b> 1 perangkat hanya bisa setor 1 kali per hari',
-        '<b>Waktu Kirim:</b> ' + escapeHtml(new Date().toLocaleString('id-ID')),
-        '==============================',
-        '<b>Catatan:</b> Nama yang tidak muncul pada laporan harian sampai batas waktu berarti belum setor.'
+        '<b>Hari:</b> ' + escapeHtml(data.hari),
+        '<b>Laporan Bug:</b> ' + escapeHtml(data.bug),
+        '<b>Catatan:</b> ' + escapeHtml(data.catatan || '-')
       ].join('\n');
     }
 
@@ -836,7 +843,7 @@
       }
 
       if (hasDeviceSubmittedToday()) {
-        showNotice('error', 'Perangkat ini sudah mengirim setoran hari ini. Coba lagi besok.');
+        showNotice('error', 'Perangkat ini sudah mengirim laporan hari ini. Coba lagi besok.');
         return;
       }
 
@@ -844,26 +851,22 @@
       const todayCount = recordsToday().length;
       const data = {
         nama: nama.value.trim(),
-        jam: jam.value,
+        hari: hari.value.trim(),
+        bug: bug.value.trim(),
+        catatan: catatan.value.trim(),
         tanggal: todayId(),
-        hari: todayName(),
-        statusHarian: duplicateToday ? 'PEMBARUAN ABSEN HARI INI' : 'ABSEN HARI INI',
+        statusHarian: duplicateToday ? 'PEMBARUAN LAPORAN HARI INI' : 'LAPORAN HARI INI',
         inputHarianKe: duplicateToday ? todayCount : todayCount + 1,
         deviceId: getDeviceId()
       };
 
-      if (!data.nama || data.jam === '') {
-        showNotice('error', 'Nama dan jam wajib diisi.');
-        return;
-      }
-
-      if (Number(data.jam) < 0) {
-        showNotice('error', 'Jam tidak boleh kurang dari 0.');
+      if (!data.nama || !data.hari || !data.bug) {
+        showNotice('error', 'Nama, hari, dan laporan bug wajib diisi.');
         return;
       }
 
       if (duplicateToday) {
-        const lanjut = await customConfirm('Nama ini sudah absen hari ini di perangkat ini. Kirim ulang sebagai pembaruan?');
+        const lanjut = await customConfirm('Nama ini sudah mengirim laporan hari ini di perangkat ini. Kirim ulang sebagai pembaruan?');
         if (!lanjut) return;
       }
 
@@ -874,7 +877,7 @@
         await sendTelegram(buildMessage(data));
         saveDailyRecord(data);
         saveDeviceLock(data);
-        showNotice('success', 'Setoran berhasil dikirim.');
+        showNotice('success', 'Laporan berhasil dikirim.');
         speak(THANKS_TEXT);
         form.reset();
         nama.focus();
@@ -882,7 +885,7 @@
         showNotice('error', error.message || 'Setoran gagal dikirim.');
       } finally {
         sendBtn.disabled = false;
-        sendBtn.textContent = 'Kirim Setoran';
+        sendBtn.textContent = 'Kirim Laporan';
       }
     });
 
