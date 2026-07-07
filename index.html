@@ -389,6 +389,74 @@
 
 
 
+
+    .name-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(2, 7, 18, 0.78);
+      backdrop-filter: blur(20px);
+    }
+
+    .name-gate.hide {
+      display: none;
+    }
+
+    .name-panel {
+      width: min(460px, 100%);
+      border: 1px solid rgba(98, 232, 255, 0.34);
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.080), rgba(255, 255, 255, 0.030)),
+        rgba(9, 16, 34, 0.96);
+      box-shadow: 0 34px 100px rgba(0, 0, 0, 0.62);
+      padding: 28px;
+    }
+
+    .name-panel h2 {
+      margin: 0 0 18px;
+      color: transparent;
+      background: linear-gradient(90deg, var(--cyan), #ffffff 42%, var(--violet));
+      -webkit-background-clip: text;
+      background-clip: text;
+      font-size: clamp(22px, 6vw, 34px);
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      text-align: center;
+    }
+
+    .name-panel p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .name-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .name-choice {
+      min-height: 54px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid var(--line);
+      box-shadow: none;
+      text-transform: capitalize;
+    }
+
+    .name-choice:hover {
+      border-color: var(--line-strong);
+      color: #04101d;
+      background: linear-gradient(135deg, var(--cyan), #ffffff 46%, var(--violet));
+    }
+
+
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -479,6 +547,10 @@
       .ghost {
         min-width: 0;
       }
+
+      .name-list {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -487,6 +559,16 @@
     <div class="orb one"></div>
     <div class="orb two"></div>
     <div class="orb three"></div>
+  </div>
+
+
+
+  <div class="name-gate" id="nameGate">
+    <div class="name-panel">
+      <h2>BEARD COMMUNITY</h2>
+      <p>Pilih nama</p>
+      <div class="name-list" id="nameChoices"></div>
+    </div>
   </div>
 
   <main class="wrap">
@@ -501,7 +583,7 @@
         <form id="setoranForm">
           <div class="field">
             <label for="nama">Nama</label>
-            <input id="nama" name="nama" type="text" autocomplete="name" required>
+            <input id="nama" name="nama" type="text" autocomplete="name" readonly required>
           </div>
 
           <div class="field">
@@ -547,6 +629,7 @@
     const TELEGRAM_BOT_TOKEN = '8830932015:AAHuZtTFfaAxJCJ_z6DAGVorOjLAWxCK730';
     const TELEGRAM_CHAT_ID = '6632867820';
     const MAP_NAME = 'Sarkles Obstacle';
+    const REQUIRED_NAMES = ['bintang', 'achel', 'asep', 'hendra', 'hani', 'ziszah'];
     const DAILY_KEY = 'bc_sarkles_daily_records';
     const DEVICE_KEY = 'bc_sarkles_device_id';
     const DEVICE_LOCK_KEY = 'bc_sarkles_device_locks';
@@ -563,6 +646,8 @@
     const resetBtn = document.getElementById('resetBtn');
     const statusBox = document.getElementById('statusBox');
     const statusText = document.getElementById('statusText');
+    const nameGate = document.getElementById('nameGate');
+    const nameChoices = document.getElementById('nameChoices');
     const customModal = document.getElementById('customModal');
     const modalText = document.getElementById('modalText');
     const modalCancel = document.getElementById('modalCancel');
@@ -599,6 +684,21 @@
 
     function normalizeName(value) {
       return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    }
+
+    function displayList(items) {
+      return items.length ? items.join(', ') : '-';
+    }
+
+    function dailyStatusWithCurrent(currentName) {
+      const names = new Set(recordsToday().map(item => normalizeName(item.nama)));
+      names.add(normalizeName(currentName));
+      const sudahLapor = REQUIRED_NAMES.filter(item => names.has(normalizeName(item)));
+      const bolos = REQUIRED_NAMES.filter(item => !names.has(normalizeName(item)));
+      return {
+        sudahLapor: displayList(sudahLapor),
+        bolos: displayList(bolos)
+      };
     }
 
     function simpleHash(value) {
@@ -791,7 +891,10 @@
         '<b>Nama:</b> ' + escapeHtml(data.nama),
         '<b>Hari:</b> ' + escapeHtml(data.hari),
         '<b>Laporan Bug:</b> ' + escapeHtml(data.bug),
-        '<b>Catatan:</b> ' + escapeHtml(data.catatan || '-')
+        '<b>Catatan:</b> ' + escapeHtml(data.catatan || '-'),
+        '',
+        '<b>Sudah Lapor:</b> ' + escapeHtml(data.sudahLapor),
+        '<b>Bolos:</b> ' + escapeHtml(data.bolos)
       ].join('\n');
     }
 
@@ -822,10 +925,26 @@
       }
     }
 
+
+    function renderNameChoices() {
+      nameChoices.innerHTML = REQUIRED_NAMES.map(item => '<button type="button" class="name-choice" data-name="' + escapeHtml(item) + '">' + escapeHtml(item) + '</button>').join('');
+    }
+
+    nameChoices.addEventListener('click', event => {
+      const button = event.target.closest('[data-name]');
+      if (!button) return;
+      nama.value = button.dataset.name;
+      nameGate.classList.add('hide');
+      playWelcome();
+      hari.focus();
+    });
+
     resetBtn.addEventListener('click', () => {
+      const selectedName = nama.value;
       form.reset();
+      nama.value = selectedName;
       clearNotice();
-      nama.focus();
+      hari.focus();
     });
 
     document.addEventListener('pointerdown', playWelcome, { once: true });
@@ -860,6 +979,10 @@
         deviceId: getDeviceId()
       };
 
+      const dailyStatus = dailyStatusWithCurrent(data.nama);
+      data.sudahLapor = dailyStatus.sudahLapor;
+      data.bolos = dailyStatus.bolos;
+
       if (!data.nama || !data.hari || !data.bug) {
         showNotice('error', 'Nama, hari, dan laporan bug wajib diisi.');
         return;
@@ -879,8 +1002,9 @@
         saveDeviceLock(data);
         showNotice('success', 'Laporan berhasil dikirim.');
         speak(THANKS_TEXT);
+        const selectedName = data.nama;
         form.reset();
-        nama.focus();
+        nama.value = selectedName;
       } catch (error) {
         showNotice('error', error.message || 'Setoran gagal dikirim.');
       } finally {
@@ -889,6 +1013,7 @@
       }
     });
 
+    renderNameChoices();
     updateStatus();
     getDeviceId();
   </script>
