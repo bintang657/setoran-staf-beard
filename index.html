@@ -3,43 +3,39 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Setoran Sarkles Obstacle</title>
+  <title>Beard Community</title>
   <style>
     :root {
-      --bg-1: #030712;
-      --bg-2: #071022;
-      --card: rgba(9, 16, 34, 0.70);
-      --card-strong: rgba(12, 21, 45, 0.88);
-      --line: rgba(149, 177, 230, 0.20);
-      --line-strong: rgba(99, 230, 255, 0.42);
-      --text: #eff6ff;
-      --muted: #9fb0d1;
+      --bg: #020611;
+      --bg2: #081225;
+      --panel: rgba(8, 16, 35, 0.78);
+      --panel2: rgba(12, 24, 52, 0.92);
+      --line: rgba(150, 180, 235, 0.22);
+      --line2: rgba(98, 232, 255, 0.50);
+      --text: #eef6ff;
+      --muted: #9fb2d2;
       --cyan: #62e8ff;
       --blue: #5b8cff;
       --violet: #9a7cff;
       --green: #52e2ad;
       --red: #ff617d;
-      --shadow: 0 34px 120px rgba(0, 0, 0, 0.58);
+      --shadow: 0 42px 140px rgba(0, 0, 0, 0.62);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
-    html {
-      min-height: 100%;
-    }
+    html { min-height: 100%; }
 
     body {
       margin: 0;
       min-height: 100vh;
       color: var(--text);
       background:
-        radial-gradient(circle at 15% 12%, rgba(98, 232, 255, 0.22), transparent 27rem),
-        radial-gradient(circle at 86% 15%, rgba(154, 124, 255, 0.20), transparent 31rem),
-        radial-gradient(circle at 50% 110%, rgba(91, 140, 255, 0.16), transparent 36rem),
-        linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, #0d1430 100%);
+        radial-gradient(circle at 18% 10%, rgba(98, 232, 255, 0.22), transparent 26rem),
+        radial-gradient(circle at 84% 18%, rgba(154, 124, 255, 0.20), transparent 30rem),
+        radial-gradient(circle at 50% 112%, rgba(91, 140, 255, 0.18), transparent 36rem),
+        linear-gradient(135deg, var(--bg) 0%, var(--bg2) 50%, #0d1430 100%);
       overflow-x: hidden;
     }
 
@@ -47,101 +43,112 @@
       content: "";
       position: fixed;
       inset: 0;
+      z-index: 0;
+      pointer-events: none;
       background-image:
         linear-gradient(rgba(255, 255, 255, 0.034) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.034) 1px, transparent 1px);
-      background-size: 42px 42px;
-      mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.9), transparent 76%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.035) 46%, transparent 58%);
-      transform: translateX(-120%);
-      animation: sweep 8s ease-in-out infinite;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    @keyframes sweep {
-      0%, 38% { transform: translateX(-120%); }
-      70%, 100% { transform: translateX(120%); }
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.92), transparent 78%);
     }
 
     .ambient {
       position: fixed;
       inset: 0;
+      z-index: 0;
       overflow: hidden;
       pointer-events: none;
-      z-index: 0;
     }
 
     .orb {
       position: absolute;
       border-radius: 999px;
-      filter: blur(18px);
+      filter: blur(20px);
       opacity: 0.16;
-      animation: float 9s ease-in-out infinite alternate;
+      animation: float 10s ease-in-out infinite alternate;
     }
 
-    .orb.one {
-      width: 310px;
-      height: 310px;
-      left: -130px;
-      bottom: 6%;
-      background: var(--cyan);
+    .orb.one { width: 330px; height: 330px; left: -130px; bottom: 8%; background: var(--cyan); }
+    .orb.two { width: 360px; height: 360px; right: -150px; top: 16%; background: var(--violet); animation-delay: 1.4s; }
+    .orb.three { width: 240px; height: 240px; left: 48%; bottom: -90px; background: var(--blue); animation-delay: 2.2s; }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(98, 232, 255, 0.62);
+      box-shadow: 0 0 20px rgba(98, 232, 255, 0.75);
+      animation: drift 12s linear infinite;
     }
 
-    .orb.two {
-      width: 340px;
-      height: 340px;
-      right: -150px;
-      top: 17%;
-      background: var(--violet);
-      animation-delay: 1.4s;
-    }
-
-    .orb.three {
-      width: 220px;
-      height: 220px;
-      left: 50%;
-      bottom: -90px;
-      background: var(--blue);
-      animation-delay: 2.2s;
-    }
+    .particle:nth-child(4) { left: 10%; top: 72%; animation-delay: 0s; }
+    .particle:nth-child(5) { left: 24%; top: 22%; animation-delay: 2s; }
+    .particle:nth-child(6) { left: 78%; top: 68%; animation-delay: 4s; }
+    .particle:nth-child(7) { left: 88%; top: 34%; animation-delay: 6s; }
+    .particle:nth-child(8) { left: 42%; top: 84%; animation-delay: 8s; }
 
     @keyframes float {
       from { transform: translate3d(0, 0, 0) scale(1); }
-      to { transform: translate3d(18px, -24px, 0) scale(1.07); }
+      to { transform: translate3d(20px, -26px, 0) scale(1.07); }
+    }
+
+    @keyframes drift {
+      from { transform: translateY(70px); opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      to { transform: translateY(-180px); opacity: 0; }
     }
 
     .wrap {
       position: relative;
       z-index: 2;
-      width: min(720px, calc(100% - 32px));
+      width: min(820px, calc(100% - 34px));
       min-height: 100vh;
       margin: 0 auto;
       display: grid;
       place-items: center;
       padding: 34px 0;
+      opacity: 0.18;
+      filter: blur(2px);
+      transform: scale(0.985);
+      pointer-events: none;
+      transition: opacity 320ms ease, filter 320ms ease, transform 320ms ease;
+    }
+
+    body.app-ready .wrap {
+      opacity: 1;
+      filter: blur(0);
+      transform: scale(1);
+      pointer-events: auto;
     }
 
     .card {
       position: relative;
       width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 32px;
+      border: 1px solid rgba(148, 178, 232, 0.22);
+      border-radius: 36px;
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.030)),
-        var(--card);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(28px);
+        linear-gradient(145deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.03) 42%, rgba(98, 232, 255, 0.05)),
+        rgba(8, 15, 33, 0.78);
+      box-shadow:
+        var(--shadow),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+        0 30px 100px rgba(98, 232, 255, 0.08);
+      backdrop-filter: blur(30px) saturate(140%);
       overflow: hidden;
       isolation: isolate;
+      animation: cardEnter 620ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+      transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(98, 232, 255, 0.36);
+      box-shadow:
+        0 48px 145px rgba(0, 0, 0, 0.66),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 30px 105px rgba(98, 232, 255, 0.12);
     }
 
     .card::before {
@@ -150,83 +157,223 @@
       inset: 0;
       padding: 1px;
       border-radius: inherit;
-      background: linear-gradient(135deg, rgba(98, 232, 255, 0.72), rgba(255, 255, 255, 0.08), rgba(154, 124, 255, 0.60));
+      background: linear-gradient(135deg, rgba(98, 232, 255, 0.70), rgba(255, 255, 255, 0.08), rgba(154, 124, 255, 0.62));
       mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       mask-composite: exclude;
       pointer-events: none;
-      z-index: 2;
+      z-index: 4;
     }
 
-    .card::after {
+    .energy-ring {
+      position: absolute;
+      inset: 14px;
+      border-radius: 30px;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.54;
+      background:
+        linear-gradient(90deg, transparent, rgba(98, 232, 255, 0.22), transparent) top left / 100% 1px no-repeat,
+        linear-gradient(90deg, transparent, rgba(154, 124, 255, 0.20), transparent) bottom left / 100% 1px no-repeat,
+        linear-gradient(180deg, transparent, rgba(98, 232, 255, 0.18), transparent) top left / 1px 100% no-repeat,
+        linear-gradient(180deg, transparent, rgba(154, 124, 255, 0.18), transparent) top right / 1px 100% no-repeat;
+      animation: ringPulse 3.8s ease-in-out infinite;
+    }
+
+    .energy-ring::after {
       content: "";
       position: absolute;
-      inset: -40% -30% auto auto;
-      width: 320px;
-      height: 320px;
+      inset: -2px;
+      border-radius: inherit;
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(98, 232, 255, 0.18), transparent 34%);
+      opacity: 0;
+      transition: opacity 180ms ease;
+    }
+
+    .card:hover .energy-ring::after { opacity: 1; }
+
+    .liquid-glow {
+      position: absolute;
+      inset: auto -120px -160px auto;
+      width: 360px;
+      height: 360px;
       border-radius: 999px;
-      background: radial-gradient(circle, rgba(98, 232, 255, 0.22), transparent 68%);
+      background: conic-gradient(from 180deg, rgba(98, 232, 255, 0.18), rgba(154, 124, 255, 0.20), rgba(91, 140, 255, 0.16), rgba(98, 232, 255, 0.18));
+      filter: blur(22px);
+      opacity: 0.70;
       pointer-events: none;
+      animation: liquidMove 8s ease-in-out infinite alternate;
       z-index: -1;
     }
 
     .head {
       position: relative;
-      padding: 38px 38px 22px;
-      border-bottom: 1px solid rgba(149, 177, 230, 0.14);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent);
+      padding: 34px 38px 24px;
+      border-bottom: 1px solid rgba(148, 178, 232, 0.14);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent),
+        linear-gradient(90deg, rgba(98, 232, 255, 0.08), transparent 36%, rgba(154, 124, 255, 0.07));
+      background-size: 180% 180%;
+      animation: headerFlow 8s ease-in-out infinite alternate;
     }
 
-    .brand {
+    .head::before {
+      content: "";
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      top: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(98, 232, 255, 0.95), rgba(154, 124, 255, 0.85), transparent);
+      box-shadow: 0 0 32px rgba(98, 232, 255, 0.42);
+    }
+
+    .topline {
       display: flex;
-      justify-content: center;
       align-items: center;
-      min-height: 56px;
+      justify-content: space-between;
+      gap: 14px;
     }
 
     .brand h1 {
-      position: relative;
       margin: 0;
       color: transparent;
       background: linear-gradient(90deg, var(--cyan), #ffffff 42%, var(--violet));
       -webkit-background-clip: text;
       background-clip: text;
-      font-size: clamp(22px, 5vw, 38px);
+      font-size: clamp(24px, 5vw, 42px);
       font-weight: 950;
-      letter-spacing: 0.18em;
-      text-align: center;
-      text-shadow: 0 0 34px rgba(98, 232, 255, 0.16);
+      letter-spacing: 0.13em;
+      text-shadow: 0 0 34px rgba(98, 232, 255, 0.18);
     }
 
     .brand h1::after {
       content: "";
-      position: absolute;
-      left: 50%;
-      bottom: -16px;
-      width: min(260px, 70vw);
+      display: block;
+      width: min(360px, 72vw);
       height: 1px;
-      transform: translateX(-50%);
-      background: linear-gradient(90deg, transparent, rgba(98, 232, 255, 0.85), rgba(154, 124, 255, 0.85), transparent);
-      box-shadow: 0 0 26px rgba(98, 232, 255, 0.45);
+      margin: 16px 0 0;
+      background: linear-gradient(90deg, rgba(98, 232, 255, 0.95), rgba(154, 124, 255, 0.85), transparent);
+      box-shadow: 0 0 34px rgba(98, 232, 255, 0.50);
+      animation: lineGlow 2.6s ease-in-out infinite alternate;
     }
 
-    .body {
-      padding: 32px 38px 38px;
+    .clock {
+      min-width: 160px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 10px 12px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.04);
+      text-align: right;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .clock strong {
+      display: block;
+      color: var(--text);
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .body { padding: 30px 38px 36px; }
+
+    .selected-line {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      animation: riseIn 520ms ease both;
+    }
+
+    .selected-line::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 24px rgba(82, 226, 173, 0.75);
+      flex: 0 0 auto;
+    }
+
+    .selected-line::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.055), transparent);
+      transform: translateX(-120%);
+      animation: softSweep 5.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .selected-line span {
+      color: var(--muted);
+      font-size: 12px;
+      margin-right: auto;
+    }
+
+    .selected-line strong {
+      color: var(--text);
+      text-transform: capitalize;
+      letter-spacing: 0.03em;
+    }
+
+    .form-shell {
+      position: relative;
+      border: 1px solid rgba(148, 178, 232, 0.14);
+      border-radius: 26px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.025);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.040);
+    }
+
+    .form-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(98, 232, 255, 0.070), transparent 38%);
     }
 
     form {
+      position: relative;
+      z-index: 1;
       display: grid;
-      gap: 18px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
     }
 
     .field {
-      position: relative;
       display: flex;
       flex-direction: column;
       gap: 9px;
+      animation: riseIn 520ms ease both;
     }
 
+    .field.full { grid-column: 1 / -1; }
+    .field:nth-child(1) { animation-delay: 70ms; }
+    .field:nth-child(2) { animation-delay: 120ms; }
+    .field:nth-child(3) { animation-delay: 170ms; }
+    .field:nth-child(4) { animation-delay: 220ms; }
+
     label {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 6px 10px;
+      border-radius: 999px;
       color: #d8e6ff;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(148, 178, 232, 0.12);
       font-size: 13px;
       font-weight: 800;
       letter-spacing: 0.02em;
@@ -245,32 +392,41 @@
       border-radius: 20px;
       padding: 16px 17px;
       font: inherit;
+      caret-color: var(--cyan);
+      backdrop-filter: blur(12px);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
       transition: border-color 170ms ease, box-shadow 170ms ease, transform 170ms ease, background 170ms ease;
     }
 
-    textarea {
-      min-height: 112px;
-      resize: vertical;
+    textarea { min-height: 116px; resize: vertical; }
+
+    input[readonly] {
+      text-transform: capitalize;
+      color: #dff7ff;
+      background:
+        linear-gradient(180deg, rgba(98, 232, 255, 0.070), rgba(255, 255, 255, 0.025)),
+        rgba(3, 9, 21, 0.76);
     }
 
-    input::placeholder,
-    textarea::placeholder {
-      color: rgba(159, 176, 209, 0.58);
+    input:hover,
+    textarea:hover {
+      border-color: rgba(98, 232, 255, 0.34);
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     input:focus,
     textarea:focus {
-      border-color: var(--line-strong);
+      border-color: var(--line2);
       box-shadow:
         0 0 0 4px rgba(98, 232, 255, 0.08),
         0 16px 44px rgba(0, 0, 0, 0.18),
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
       background: rgba(4, 11, 26, 0.86);
     }
 
     .actions {
+      grid-column: 1 / -1;
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 12px;
@@ -290,6 +446,7 @@
       font-weight: 950;
       letter-spacing: -0.02em;
       overflow: hidden;
+      animation: buttonGlow 2.4s ease-in-out infinite alternate;
       transition: transform 170ms ease, filter 170ms ease, opacity 170ms ease, box-shadow 170ms ease;
     }
 
@@ -303,20 +460,14 @@
     }
 
     button:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       filter: brightness(1.05);
       box-shadow: 0 22px 64px rgba(98, 232, 255, 0.24);
     }
 
-    button:hover::before {
-      transform: translateX(120%);
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: 0.58;
-      transform: none;
-    }
+    button:hover::before { transform: translateX(120%); }
+    button:active { transform: translateY(0) scale(0.99); }
+    button:disabled { cursor: not-allowed; opacity: 0.58; transform: none; }
 
     .ghost {
       min-width: 112px;
@@ -324,15 +475,12 @@
       background: rgba(255, 255, 255, 0.035);
       border: 1px solid var(--line);
       box-shadow: none;
-    }
-
-    .ghost:hover {
-      color: var(--text);
-      box-shadow: 0 16px 44px rgba(0, 0, 0, 0.18);
+      animation: none;
     }
 
     .notice {
       display: none;
+      grid-column: 1 / -1;
       border-radius: 18px;
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.045);
@@ -342,53 +490,9 @@
       line-height: 1.55;
     }
 
-    .notice.show {
-      display: block;
-      animation: appear 220ms ease both;
-    }
-
-    .notice.success {
-      color: #c4f9e2;
-      border-color: rgba(82, 226, 173, 0.34);
-      background: rgba(82, 226, 173, 0.09);
-    }
-
-    .notice.error {
-      color: #ffd0d8;
-      border-color: rgba(255, 97, 125, 0.34);
-      background: rgba(255, 97, 125, 0.09);
-    }
-
-    @keyframes appear {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .status {
-      margin-top: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: 0.02em;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--red);
-      box-shadow: 0 0 20px currentColor;
-    }
-
-    .status.ok .dot {
-      background: var(--green);
-    }
-
-
-
+    .notice.show { display: block; animation: appear 220ms ease both; }
+    .notice.success { color: #c4f9e2; border-color: rgba(82, 226, 173, 0.34); background: rgba(82, 226, 173, 0.09); }
+    .notice.error { color: #ffd0d8; border-color: rgba(255, 97, 125, 0.34); background: rgba(255, 97, 125, 0.09); }
 
     .name-gate {
       position: fixed;
@@ -399,25 +503,42 @@
       padding: 22px;
       background: rgba(2, 7, 18, 0.78);
       backdrop-filter: blur(20px);
+      transition: opacity 260ms ease, visibility 260ms ease;
     }
 
     .name-gate.hide {
-      display: none;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
     }
 
-    .name-panel {
-      width: min(460px, 100%);
+    .name-panel,
+    .modal-box {
+      position: relative;
+      overflow: hidden;
+      width: min(470px, 100%);
       border: 1px solid rgba(98, 232, 255, 0.34);
-      border-radius: 28px;
+      border-radius: 30px;
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.080), rgba(255, 255, 255, 0.030)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.090), rgba(255, 255, 255, 0.030)),
         rgba(9, 16, 34, 0.96);
-      box-shadow: 0 34px 100px rgba(0, 0, 0, 0.62);
+      box-shadow: 0 38px 115px rgba(0, 0, 0, 0.66), 0 0 60px rgba(98, 232, 255, 0.10);
       padding: 28px;
+      animation: modalIn 220ms ease both;
+    }
+
+    .name-panel::before,
+    .modal-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(98, 232, 255, 0.14), transparent 38%);
+      pointer-events: none;
     }
 
     .name-panel h2 {
-      margin: 0 0 18px;
+      position: relative;
+      margin: 0 0 12px;
       color: transparent;
       background: linear-gradient(90deg, var(--cyan), #ffffff 42%, var(--violet));
       -webkit-background-clip: text;
@@ -429,13 +550,15 @@
     }
 
     .name-panel p {
-      margin: 0 0 16px;
+      position: relative;
+      margin: 0 0 18px;
       color: var(--muted);
       font-size: 13px;
       text-align: center;
     }
 
     .name-list {
+      position: relative;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
@@ -444,23 +567,31 @@
     .name-choice {
       min-height: 54px;
       color: var(--text);
-      background: rgba(255, 255, 255, 0.045);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.060), rgba(255, 255, 255, 0.026));
       border: 1px solid var(--line);
-      box-shadow: none;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
       text-transform: capitalize;
+      animation: choiceIn 420ms ease both;
     }
+
+    .name-choice:nth-child(1) { animation-delay: 40ms; }
+    .name-choice:nth-child(2) { animation-delay: 80ms; }
+    .name-choice:nth-child(3) { animation-delay: 120ms; }
+    .name-choice:nth-child(4) { animation-delay: 160ms; }
+    .name-choice:nth-child(5) { animation-delay: 200ms; }
+    .name-choice:nth-child(6) { animation-delay: 240ms; }
 
     .name-choice:hover {
-      border-color: var(--line-strong);
+      border-color: var(--line2);
       color: #04101d;
       background: linear-gradient(135deg, var(--cyan), #ffffff 46%, var(--violet));
+      box-shadow: 0 20px 54px rgba(98, 232, 255, 0.18);
     }
-
 
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      z-index: 10;
+      z-index: 40;
       display: none;
       place-items: center;
       padding: 22px;
@@ -468,31 +599,17 @@
       backdrop-filter: blur(18px);
     }
 
-    .modal-backdrop.show {
-      display: grid;
-      animation: fadeIn 180ms ease both;
-    }
-
-    .modal-box {
-      width: min(430px, 100%);
-      border: 1px solid rgba(98, 232, 255, 0.34);
-      border-radius: 26px;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.080), rgba(255, 255, 255, 0.030)),
-        rgba(9, 16, 34, 0.96);
-      box-shadow: 0 34px 100px rgba(0, 0, 0, 0.62);
-      padding: 24px;
-      transform: translateY(8px) scale(0.98);
-      animation: modalIn 200ms ease both;
-    }
+    .modal-backdrop.show { display: grid; animation: fadeIn 180ms ease both; }
 
     .modal-box h3 {
+      position: relative;
       margin: 0 0 8px;
       font-size: 20px;
       letter-spacing: -0.04em;
     }
 
     .modal-box p {
+      position: relative;
       margin: 0;
       color: var(--muted);
       font-size: 13px;
@@ -500,6 +617,7 @@
     }
 
     .modal-actions {
+      position: relative;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
@@ -512,6 +630,56 @@
       padding: 13px 16px;
     }
 
+    @keyframes cardEnter {
+      from { opacity: 0; transform: translateY(18px) scale(0.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes ringPulse {
+      0%, 100% { opacity: 0.35; transform: scale(1); }
+      50% { opacity: 0.72; transform: scale(1.006); }
+    }
+
+    @keyframes liquidMove {
+      from { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+      to { transform: translate3d(-24px, -18px, 0) rotate(28deg) scale(1.06); }
+    }
+
+    @keyframes headerFlow {
+      from { background-position: 0% 50%; }
+      to { background-position: 100% 50%; }
+    }
+
+    @keyframes lineGlow {
+      from { opacity: 0.55; filter: blur(0); }
+      to { opacity: 1; filter: blur(0.2px); }
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes choiceIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes softSweep {
+      0%, 45% { transform: translateX(-120%); }
+      78%, 100% { transform: translateX(120%); }
+    }
+
+    @keyframes buttonGlow {
+      from { box-shadow: 0 18px 50px rgba(98, 232, 255, 0.16); }
+      to { box-shadow: 0 24px 72px rgba(154, 124, 255, 0.24); }
+    }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -522,94 +690,92 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    @media (max-width: 560px) {
-      .wrap {
-        width: min(100% - 22px, 720px);
-        padding: 22px 0;
-      }
-
-      .head {
-        padding: 30px 22px 22px;
-      }
-
-      .body {
-        padding: 28px 22px 30px;
-      }
-
-      .brand h1 {
-        letter-spacing: 0.11em;
-      }
-
-      .actions {
-        grid-template-columns: 1fr;
-      }
-
-      .ghost {
-        min-width: 0;
-      }
-
-      .name-list {
-        grid-template-columns: 1fr;
-      }
+    @media (max-width: 680px) {
+      .wrap { width: min(100% - 22px, 820px); padding: 22px 0; }
+      .head { padding: 30px 22px 22px; }
+      .body { padding: 26px 22px 30px; }
+      .topline { flex-direction: column; align-items: stretch; }
+      .clock { text-align: left; }
+      .brand h1 { text-align: center; letter-spacing: 0.10em; }
+      .brand h1::after { margin-left: auto; margin-right: auto; }
+      form, .actions, .name-list { grid-template-columns: 1fr; }
+      .field, .field.full { grid-column: 1 / -1; }
+      .ghost { min-width: 0; }
     }
   </style>
 </head>
-<body>
+<body class="gate-open">
   <div class="ambient">
     <div class="orb one"></div>
     <div class="orb two"></div>
     <div class="orb three"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
   </div>
-
-
 
   <div class="name-gate" id="nameGate">
     <div class="name-panel">
       <h2>BEARD COMMUNITY</h2>
-      <p>Pilih nama</p>
+      <p>Pilih nama untuk masuk</p>
       <div class="name-list" id="nameChoices"></div>
     </div>
   </div>
 
   <main class="wrap">
-    <section class="card">
+    <section class="card" id="mainCard">
+      <div class="energy-ring"></div>
+      <div class="liquid-glow"></div>
       <div class="head">
-        <div class="brand">
-          <h1>BEARD COMMUNITY</h1>
+        <div class="topline">
+          <div class="brand">
+            <h1>BEARD COMMUNITY</h1>
+          </div>
+          <div class="clock">
+            <strong id="clockTime">00:00</strong>
+            <span id="clockDate">Memuat tanggal</span>
+          </div>
         </div>
       </div>
 
       <div class="body">
-        <form id="setoranForm">
-          <div class="field">
-            <label for="nama">Nama</label>
-            <input id="nama" name="nama" type="text" autocomplete="name" readonly required>
-          </div>
+        <div class="selected-line">
+          <span>Nama terpilih</span>
+          <strong id="selectedNameText">Belum dipilih</strong>
+        </div>
 
-          <div class="field">
-            <label for="hari">Hari</label>
-            <input id="hari" name="hari" type="text" required>
-          </div>
+        <div class="form-shell">
+          <form id="setoranForm">
+            <div class="field">
+              <label for="nama">Nama</label>
+              <input id="nama" name="nama" type="text" autocomplete="name" readonly required>
+            </div>
 
-          <div class="field">
-            <label for="bug">Laporan bug</label>
-            <textarea id="bug" name="bug" required></textarea>
-          </div>
+            <div class="field">
+              <label for="tanggalLaporan">Tanggal, bulan, tahun</label>
+              <input id="tanggalLaporan" name="tanggalLaporan" type="date" required>
+            </div>
 
-          <div class="field">
-            <label for="catatan">Catatan</label>
-            <textarea id="catatan" name="catatan"></textarea>
-          </div>
+            <div class="field full">
+              <label for="bug">Laporan bug</label>
+              <textarea id="bug" name="bug" required></textarea>
+            </div>
 
-          <div id="notice" class="notice"></div>
+            <div class="field full">
+              <label for="catatan">Catatan</label>
+              <textarea id="catatan" name="catatan"></textarea>
+            </div>
 
-          <div class="actions">
-            <button type="submit" id="sendBtn">Kirim Laporan</button>
-            <button type="button" class="ghost" id="resetBtn">Reset</button>
-          </div>
-        </form>
+            <div id="notice" class="notice"></div>
 
-        <div class="status" id="statusBox"><span class="dot"></span><span id="statusText">Sistem belum aktif</span></div>
+            <div class="actions">
+              <button type="submit" id="sendBtn">Kirim Laporan</button>
+              <button type="button" class="ghost" id="resetBtn">Reset</button>
+            </div>
+          </form>
+        </div>
       </div>
     </section>
   </main>
@@ -617,7 +783,7 @@
   <div class="modal-backdrop" id="customModal" aria-hidden="true">
     <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <h3 id="modalTitle">Konfirmasi</h3>
-      <p id="modalText">Nama ini sudah absen hari ini.</p>
+      <p id="modalText">Nama ini sudah mengirim laporan hari ini.</p>
       <div class="modal-actions">
         <button type="button" class="ghost" id="modalCancel">Batal</button>
         <button type="button" id="modalConfirm">Kirim Ulang</button>
@@ -633,21 +799,23 @@
     const DAILY_KEY = 'bc_sarkles_daily_records';
     const DEVICE_KEY = 'bc_sarkles_device_id';
     const DEVICE_LOCK_KEY = 'bc_sarkles_device_locks';
-    const WELCOME_TEXT = 'Welcome to Beard Community.';
-    const THANKS_TEXT = 'Terima kasih, laporan kamu sudah terkirim.';
+    const THANKS_TEXT = 'Terima kasih, laporan kamu sudah terkirim. Semoga harimu lancar.';
 
+    const mainCard = document.getElementById('mainCard');
+    const formShell = document.querySelector('.form-shell');
     const form = document.getElementById('setoranForm');
     const nama = document.getElementById('nama');
-    const hari = document.getElementById('hari');
+    const tanggalLaporan = document.getElementById('tanggalLaporan');
     const bug = document.getElementById('bug');
     const catatan = document.getElementById('catatan');
     const notice = document.getElementById('notice');
     const sendBtn = document.getElementById('sendBtn');
     const resetBtn = document.getElementById('resetBtn');
-    const statusBox = document.getElementById('statusBox');
-    const statusText = document.getElementById('statusText');
     const nameGate = document.getElementById('nameGate');
     const nameChoices = document.getElementById('nameChoices');
+    const selectedNameText = document.getElementById('selectedNameText');
+    const clockTime = document.getElementById('clockTime');
+    const clockDate = document.getElementById('clockDate');
     const customModal = document.getElementById('customModal');
     const modalText = document.getElementById('modalText');
     const modalCancel = document.getElementById('modalCancel');
@@ -666,39 +834,28 @@
         .replaceAll("'", '&#39;');
     }
 
-    function formatNumber(value) {
-      const number = Number(value || 0);
-      if (!Number.isFinite(number)) return '0';
-      return number.toLocaleString('id-ID', { maximumFractionDigits: 2 });
-    }
-
     function todayId() {
       const now = new Date();
       const offset = now.getTimezoneOffset();
       return new Date(now.getTime() - offset * 60000).toISOString().slice(0, 10);
     }
 
-    function todayName() {
-      return new Date().toLocaleDateString('id-ID', { weekday: 'long' });
+    function formatDateInput(value) {
+      if (!value) return '-';
+      const date = new Date(value + 'T00:00:00');
+      return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
     }
 
     function normalizeName(value) {
       return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
     }
 
-    function displayList(items) {
-      return items.length ? items.join(', ') : '-';
+    function titleCase(value) {
+      return String(value || '').replace(/\b\w/g, char => char.toUpperCase());
     }
 
-    function dailyStatusWithCurrent(currentName) {
-      const names = new Set(recordsToday().map(item => normalizeName(item.nama)));
-      names.add(normalizeName(currentName));
-      const sudahLapor = REQUIRED_NAMES.filter(item => names.has(normalizeName(item)));
-      const bolos = REQUIRED_NAMES.filter(item => !names.has(normalizeName(item)));
-      return {
-        sudahLapor: displayList(sudahLapor),
-        bolos: displayList(bolos)
-      };
+    function displayList(items) {
+      return items.length ? items.join(', ') : '-';
     }
 
     function simpleHash(value) {
@@ -761,12 +918,7 @@
         const itemDate = new Date(item.tanggal + 'T00:00:00');
         return itemDate >= limitDate;
       });
-      locks.unshift({
-        tanggal: data.tanggal,
-        deviceId: data.deviceId,
-        nama: data.nama,
-        waktu: new Date().toISOString()
-      });
+      locks.unshift({ tanggal: data.tanggal, deviceId: data.deviceId, nama: data.nama, waktu: new Date().toISOString() });
       saveDeviceLocks(locks);
     }
 
@@ -796,15 +948,33 @@
       return recordsToday().some(item => normalizeName(item.nama) === target);
     }
 
+    function dailyStatusWithCurrent(currentName) {
+      const names = new Set(recordsToday().map(item => normalizeName(item.nama)));
+      names.add(normalizeName(currentName));
+      const sudahLapor = REQUIRED_NAMES.filter(item => names.has(normalizeName(item)));
+      const bolos = REQUIRED_NAMES.filter(item => !names.has(normalizeName(item)));
+      return { sudahLapor: displayList(sudahLapor), bolos: displayList(bolos) };
+    }
+
     function saveDailyRecord(data) {
+      const limitDate = new Date();
+      limitDate.setDate(limitDate.getDate() - 30);
       const records = getDailyRecords().filter(item => {
         const recentDate = new Date(item.tanggal + 'T00:00:00');
-        const limitDate = new Date();
-        limitDate.setDate(limitDate.getDate() - 30);
         return recentDate >= limitDate;
       });
       records.unshift(data);
       saveDailyRecords(records);
+    }
+
+    function getAssistantVoice() {
+      if (!('speechSynthesis' in window)) return null;
+      const voices = window.speechSynthesis.getVoices();
+      return voices.find(voice => /id-ID/i.test(voice.lang) && /google|microsoft|natural|female|wanita|gadis|damayanti/i.test(voice.name))
+        || voices.find(voice => /id-ID/i.test(voice.lang))
+        || voices.find(voice => /indonesia|bahasa/i.test(voice.lang + ' ' + voice.name))
+        || voices[0]
+        || null;
     }
 
     function speak(text) {
@@ -812,25 +982,25 @@
       try {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'id-ID';
-        utterance.rate = 0.95;
-        utterance.pitch = 1;
+        const voice = getAssistantVoice();
+        if (voice) utterance.voice = voice;
+        utterance.lang = voice ? voice.lang : 'id-ID';
+        utterance.rate = 0.90;
+        utterance.pitch = 1.04;
         utterance.volume = 1;
         window.speechSynthesis.speak(utterance);
       } catch {
       }
     }
 
-    let welcomeSpoken = false;
+    function speakIntroForName(name) {
+      const displayName = titleCase(name);
+      speak('Halo ' + displayName + '. Selamat datang. Silakan isi tanggal laporan, tulis bug yang kamu temukan, lalu kirim laporan.');
+    }
 
-    function playWelcome() {
-      if (welcomeSpoken) return;
-      if (navigator.userActivation && !navigator.userActivation.hasBeenActive) {
-        speak(WELCOME_TEXT);
-        return;
-      }
-      welcomeSpoken = true;
-      speak(WELCOME_TEXT);
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => getAssistantVoice();
     }
 
     function showNotice(type, message) {
@@ -859,21 +1029,10 @@
           resolve(result);
         }
 
-        function onCancel() {
-          close(false);
-        }
-
-        function onConfirm() {
-          close(true);
-        }
-
-        function onBackdrop(event) {
-          if (event.target === customModal) close(false);
-        }
-
-        function onKeydown(event) {
-          if (event.key === 'Escape') close(false);
-        }
+        function onCancel() { close(false); }
+        function onConfirm() { close(true); }
+        function onBackdrop(event) { if (event.target === customModal) close(false); }
+        function onKeydown(event) { if (event.key === 'Escape') close(false); }
 
         modalCancel.addEventListener('click', onCancel);
         modalConfirm.addEventListener('click', onConfirm);
@@ -889,7 +1048,7 @@
         '<b>LAPORAN BUG MAP</b>',
         '',
         '<b>Nama:</b> ' + escapeHtml(data.nama),
-        '<b>Hari:</b> ' + escapeHtml(data.hari),
+        '<b>Tanggal:</b> ' + escapeHtml(data.tanggalLaporan),
         '<b>Laporan Bug:</b> ' + escapeHtml(data.bug),
         '<b>Catatan:</b> ' + escapeHtml(data.catatan || '-'),
         '',
@@ -909,47 +1068,61 @@
           disable_web_page_preview: true
         })
       });
-
       const result = await response.json();
-      if (!result.ok) throw new Error(result.description || 'Gagal mengirim setoran.');
+      if (!result.ok) throw new Error(result.description || 'Gagal mengirim laporan.');
       return result;
     }
 
-    function updateStatus() {
-      if (configured()) {
-        statusBox.classList.add('ok');
-        statusText.textContent = 'Sistem siap menerima setoran';
-      } else {
-        statusBox.classList.remove('ok');
-        statusText.textContent = 'Sistem belum aktif';
-      }
+    function updateClock() {
+      const now = new Date();
+      clockTime.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      clockDate.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
     }
-
 
     function renderNameChoices() {
       nameChoices.innerHTML = REQUIRED_NAMES.map(item => '<button type="button" class="name-choice" data-name="' + escapeHtml(item) + '">' + escapeHtml(item) + '</button>').join('');
     }
 
+    function enterApp(selectedName) {
+      nama.value = selectedName;
+      selectedNameText.textContent = selectedName;
+      document.body.classList.add('app-ready');
+      document.body.classList.remove('gate-open');
+      nameGate.classList.add('hide');
+      speakIntroForName(selectedName);
+      setTimeout(() => tanggalLaporan.focus(), 280);
+    }
+
     nameChoices.addEventListener('click', event => {
       const button = event.target.closest('[data-name]');
       if (!button) return;
-      nama.value = button.dataset.name;
-      nameGate.classList.add('hide');
-      playWelcome();
-      hari.focus();
+      enterApp(button.dataset.name);
+    });
+
+    formShell.addEventListener('pointermove', event => {
+      const rect = formShell.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      formShell.style.setProperty('--mx', x + '%');
+      formShell.style.setProperty('--my', y + '%');
+    });
+
+    mainCard.addEventListener('pointermove', event => {
+      const rect = mainCard.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      mainCard.style.setProperty('--mx', x + '%');
+      mainCard.style.setProperty('--my', y + '%');
     });
 
     resetBtn.addEventListener('click', () => {
       const selectedName = nama.value;
       form.reset();
       nama.value = selectedName;
+      selectedNameText.textContent = selectedName || 'Belum dipilih';
+      tanggalLaporan.value = todayId();
       clearNotice();
-      hari.focus();
-    });
-
-    document.addEventListener('pointerdown', playWelcome, { once: true });
-    window.addEventListener('load', () => {
-      setTimeout(playWelcome, 700);
+      tanggalLaporan.focus();
     });
 
     form.addEventListener('submit', async event => {
@@ -970,7 +1143,7 @@
       const todayCount = recordsToday().length;
       const data = {
         nama: nama.value.trim(),
-        hari: hari.value.trim(),
+        tanggalLaporan: formatDateInput(tanggalLaporan.value),
         bug: bug.value.trim(),
         catatan: catatan.value.trim(),
         tanggal: todayId(),
@@ -983,8 +1156,8 @@
       data.sudahLapor = dailyStatus.sudahLapor;
       data.bolos = dailyStatus.bolos;
 
-      if (!data.nama || !data.hari || !data.bug) {
-        showNotice('error', 'Nama, hari, dan laporan bug wajib diisi.');
+      if (!data.nama || !data.tanggalLaporan || data.tanggalLaporan === '-' || !data.bug) {
+        showNotice('error', 'Nama, tanggal, dan laporan bug wajib diisi.');
         return;
       }
 
@@ -1005,17 +1178,21 @@
         const selectedName = data.nama;
         form.reset();
         nama.value = selectedName;
+        selectedNameText.textContent = selectedName;
+        tanggalLaporan.value = todayId();
       } catch (error) {
-        showNotice('error', error.message || 'Setoran gagal dikirim.');
+        showNotice('error', error.message || 'Laporan gagal dikirim.');
       } finally {
         sendBtn.disabled = false;
         sendBtn.textContent = 'Kirim Laporan';
       }
     });
 
+    tanggalLaporan.value = todayId();
     renderNameChoices();
-    updateStatus();
+    updateClock();
     getDeviceId();
+    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>
